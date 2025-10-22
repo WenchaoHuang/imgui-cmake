@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Wenchao Huang <physhuangwenchao@gmail.com>
+﻿# Copyright (c) 2025 Wenchao Huang <physhuangwenchao@gmail.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -30,15 +30,15 @@ project(${TARGET_NAME} LANGUAGES CXX)
 #########################   Locate source directory    #########################
 ################################################################################
 
-# Search order:
-# 1. Check if ImGui source files are located in the current directory.
-# 2. If not found, check the parent directory under "../imgui".
+# Search order for ImGui:
+# 1. Check if ImGui source files are located in the parent directory under "../imgui" (recommended).
+# 2. If not found, check the current directory.
 # 3. If neither exists, require the user to manually specify IMGUI_SOURCE_DIR.
 
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/imgui.h")
-	set(IMGUI_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "Path to the ImGui source directory")
-elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../imgui/imgui.h")
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../imgui/imgui.h")
 	set(IMGUI_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../imgui" CACHE PATH "Path to the ImGui source directory")
+elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/imgui.h")
+	set(IMGUI_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "Path to the ImGui source directory")
 else()
 	set(IMGUI_SOURCE_DIR "" CACHE PATH "Path to the ImGui source directory")
 endif()
@@ -48,6 +48,40 @@ if(NOT EXISTS "${IMGUI_SOURCE_DIR}/imgui.h")
 endif()
 
 message(STATUS "ImGui source directory: ${IMGUI_SOURCE_DIR}")
+
+################################################################################
+#############################   Backend options    #############################
+################################################################################
+
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+	option(IMGUI_BACKEND_DX9			"Enable DirectX9 backend"		OFF)
+	option(IMGUI_BACKEND_DX10			"Enable DirectX10 backend"		OFF)
+	option(IMGUI_BACKEND_DX11			"Enable DirectX11 backend"		OFF)
+	option(IMGUI_BACKEND_DX12			"Enable DirectX12 backend"		OFF)
+	option(IMGUI_BACKEND_WIN32			"Enable Win32 backend"			OFF)
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin|Windows")
+	option(IMGUI_BACKEND_VULKAN			"Enable Vulkan backend"			OFF)
+	option(IMGUI_BACKEND_OPENGL2		"Enable OpenGL2 backend"		OFF)
+	option(IMGUI_BACKEND_OPENGL3		"Enable OpenGL3 backend"		OFF)
+	option(IMGUI_BACKEND_GLFW			"Enable GLFW backend"			OFF)
+	option(IMGUI_BACKEND_GLUT			"Enable GLUT backend"			OFF)
+	option(IMGUI_BACKEND_SDL2			"Enable SDL2 backend"			OFF)
+	option(IMGUI_BACKEND_SDL3			"Enable SDL3 backend"			OFF)
+	option(IMGUI_BACKEND_SDLGPU3		"Enable SDLGPU3 backend"		OFF)
+	option(IMGUI_BACKEND_SDLRENDERER2	"Enable SDLRenderer2 backend"	OFF)
+	option(IMGUI_BACKEND_SDLRENDERER3	"Enable SDLRenderer3 backend"	OFF)
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+	option(IMGUI_BACKEND_OSX			"Enable OSX backend"			OFF)
+	option(IMGUI_BACKEND_METAL			"Enable Metal backend"			OFF)
+endif()
+
+if(CMAKE_SYSTEM_NAME MATCHES "Web")
+	option(IMGUI_BACKEND_WGPU			"Enable WebGPU backend"			OFF)
+endif()
 
 ################################################################################
 #############################   Collect sources    #############################
@@ -69,6 +103,96 @@ set(IMGUI_SOURCES
 	${IMGUI_SOURCE_DIR}/imgui_widgets.cpp
 )
 
+if(IMGUI_BACKEND_DX9)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx9.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx9.cpp")
+endif()
+
+if(IMGUI_BACKEND_DX10)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx10.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx10.cpp")
+endif()
+
+if(IMGUI_BACKEND_DX11)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx11.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx11.cpp")
+endif()
+
+if(IMGUI_BACKEND_DX12)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx12.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx12.cpp")
+endif()
+
+if(IMGUI_BACKEND_WGPU)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_wgpu.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_wgpu.cpp")
+endif()
+
+if(IMGUI_BACKEND_METAL)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_metal.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_metal.mm")
+endif()
+
+if(IMGUI_BACKEND_VULKAN)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp")
+endif()
+
+if(IMGUI_BACKEND_OPENGL2)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl2.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl2.cpp")
+endif()
+
+if(IMGUI_BACKEND_OPENGL3)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp")
+endif()
+
+if(IMGUI_BACKEND_OSX)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_osx.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_osx.mm")
+endif()
+
+if(IMGUI_BACKEND_GLFW)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.cpp")
+endif()
+
+if(IMGUI_BACKEND_GLUT)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glut.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glut.cpp")
+endif()
+
+if(IMGUI_BACKEND_WIN32)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_win32.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_win32.cpp")
+endif()
+
+if(IMGUI_BACKEND_SDL2)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp")
+endif()
+
+if(IMGUI_BACKEND_SDL3)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp")
+endif()
+
+if(IMGUI_BACKEND_SDLGPU3)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlgpu3.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlgpu3.cpp")
+endif()
+
+if(IMGUI_BACKEND_SDLRENDERER2)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer2.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer2.cpp")
+endif()
+
+if(IMGUI_BACKEND_SDLRENDERER3)
+	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.h")
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp")
+endif()
+
 ################################################################################
 #############################   Create library    ##############################
 ################################################################################
@@ -76,5 +200,67 @@ set(IMGUI_SOURCES
 # Create the static library
 add_library(${TARGET_NAME} STATIC ${IMGUI_HEADERS} ${IMGUI_SOURCES})
 
-# Public include directory
+# Include directories
 target_include_directories(${TARGET_NAME} PUBLIC ${IMGUI_SOURCE_DIR})
+
+# Link libraries
+if(IMGUI_BACKEND_VULKAN)
+	find_package(Vulkan REQUIRED)
+	target_link_libraries(${TARGET_NAME} PRIVATE Vulkan::Vulkan)
+endif()
+
+# MSVC settings
+if(MSVC)
+    target_compile_options(${TARGET_NAME} PRIVATE /MP /W4)
+endif()
+
+################################################################################
+#############################   Build examples    ##############################
+################################################################################
+
+# Add examples (optional)
+option(IMGUI_BUILD_EXAMPLES "Build ImGui examples" OFF)
+
+if(IMGUI_BUILD_EXAMPLES)
+	set(EXAMPLE_NAME example_null)
+	add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
+	target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+	target_link_libraries(${EXAMPLE_NAME} imgui)
+
+	if(IMGUI_BACKEND_WIN32)
+		if(IMGUI_BACKEND_DX9)
+			set(EXAMPLE_NAME example_win32_directx9)
+			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
+			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+			target_link_libraries(${EXAMPLE_NAME} imgui d3d9)
+		endif()
+
+		if(IMGUI_BACKEND_DX10)
+			set(EXAMPLE_NAME example_win32_directx10)
+			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
+			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+			target_link_libraries(${EXAMPLE_NAME} imgui d3d10)
+		endif()
+
+		if(IMGUI_BACKEND_DX11)
+			set(EXAMPLE_NAME example_win32_directx11)
+			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
+			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+			target_link_libraries(${EXAMPLE_NAME} imgui d3d11)
+		endif()
+
+		if(IMGUI_BACKEND_DX12)
+			set(EXAMPLE_NAME example_win32_directx12)
+			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
+			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+			target_link_libraries(${EXAMPLE_NAME} imgui d3d12 dxgi)
+		endif()
+
+		if(IMGUI_BACKEND_VULKAN)
+			set(EXAMPLE_NAME example_win32_vulkan)
+			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
+			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+			target_link_libraries(${EXAMPLE_NAME} imgui Vulkan::Vulkan)
+		endif()
+	endif()
+endif()
