@@ -244,13 +244,30 @@ add_library(${TARGET_NAME} STATIC ${IMGUI_HEADERS} ${IMGUI_SOURCES})
 # Include directories
 target_include_directories(${TARGET_NAME} PUBLIC ${IMGUI_SOURCE_DIR})
 
+# ImPlot directory
 if(IMGUI_ENABLE_IMPLOT)
 	target_include_directories(${TARGET_NAME} PUBLIC ${IMPLOT_SOURCE_DIR})
 endif()
 
+# Vulkan library
 if(IMGUI_BACKEND_VULKAN)
 	find_package(Vulkan REQUIRED)
 	target_link_libraries(${TARGET_NAME} PRIVATE Vulkan::Vulkan)
+endif()
+
+# GLFW include
+if(IMGUI_BACKEND_GLFW)
+	# GLFW already added by parent object
+	if(TARGET glfw)
+		target_link_libraries(${TARGET_NAME} PRIVATE glfw)
+	else()
+		set(IMGUI_GLFW_INCLUDE "GLFW_INCLUDE_NOT_FOUND" CACHE PATH "Path to the GLFW include directory")
+		if(NOT EXISTS "${IMGUI_GLFW_INCLUDE}/GLFW/glfw3.h")
+			message(FATAL_ERROR "GLFW not found. Please IMGUI_GLFW_INCLUDE to a valid include directory.")
+		else()
+			target_include_directories(${TARGET_NAME} PRIVATE "${IMGUI_GLFW_INCLUDE}")
+		endif()
+	endif()
 endif()
 
 # MSVC settings
@@ -305,6 +322,15 @@ if(IMGUI_BUILD_EXAMPLES)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
 			target_link_libraries(${EXAMPLE_NAME} imgui Vulkan::Vulkan)
+		endif()
+	endif()
+
+	if(IMGUI_BACKEND_GLFW AND TARGET glfw)
+		if(IMGUI_BACKEND_VULKAN)
+			set(EXAMPLE_NAME example_glfw_vulkan)
+			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
+			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+			target_link_libraries(${EXAMPLE_NAME} imgui glfw Vulkan::Vulkan)
 		endif()
 	endif()
 endif()
