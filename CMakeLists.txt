@@ -50,6 +50,34 @@ endif()
 message(STATUS "ImGui source directory: ${IMGUI_SOURCE_DIR}")
 
 ################################################################################
+##############################   Locate ImPlot    ##############################
+################################################################################
+
+# Enable ImPlot (optional)
+option(IMGUI_ENABLE_IMPLOT "Enable ImPlot support" OFF)
+
+# Search order for ImPlot:
+# 1. Check if ImPlot source files are located in the parent directory under "../implot" (recommended).
+# 2. If not found, check the current directory.
+# 3. If neither exists, require the user to manually specify IMPLOT_SOURCE_DIR.
+
+if(IMGUI_ENABLE_IMPLOT)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../implot/implot.h")
+        set(IMPLOT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../implot" CACHE PATH "Path to the ImPlot source directory")
+    elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/implot.h")
+        set(IMPLOT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "Path to the ImPlot source directory")
+    else()
+        set(IMPLOT_SOURCE_DIR "" CACHE PATH "Path to the ImPlot source directory")
+    endif()
+
+    if(NOT EXISTS "${IMPLOT_SOURCE_DIR}/implot.h")
+        message(FATAL_ERROR "Invalid IMPLOT_SOURCE_DIR: ${IMPLOT_SOURCE_DIR}. Please set it to a valid ImPlot source directory.")
+    endif()
+
+    message(STATUS "ImPlot source directory: ${IMPLOT_SOURCE_DIR}")
+endif()
+
+################################################################################
 #############################   Backend options    #############################
 ################################################################################
 
@@ -102,6 +130,19 @@ set(IMGUI_SOURCES
 	${IMGUI_SOURCE_DIR}/imgui_tables.cpp
 	${IMGUI_SOURCE_DIR}/imgui_widgets.cpp
 )
+
+# ImPlot sources
+if(IMGUI_ENABLE_IMPLOT)
+    list(APPEND IMGUI_HEADERS
+        ${IMPLOT_SOURCE_DIR}/implot.h
+        ${IMPLOT_SOURCE_DIR}/implot_internal.h
+    )
+    list(APPEND IMGUI_SOURCES
+        ${IMPLOT_SOURCE_DIR}/implot.cpp
+		${IMPLOT_SOURCE_DIR}/implot_demo.cpp
+        ${IMPLOT_SOURCE_DIR}/implot_items.cpp
+    )
+endif()
 
 if(IMGUI_BACKEND_DX9)
 	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx9.h")
@@ -203,7 +244,10 @@ add_library(${TARGET_NAME} STATIC ${IMGUI_HEADERS} ${IMGUI_SOURCES})
 # Include directories
 target_include_directories(${TARGET_NAME} PUBLIC ${IMGUI_SOURCE_DIR})
 
-# Link libraries
+if(IMGUI_ENABLE_IMPLOT)
+	target_include_directories(${TARGET_NAME} PUBLIC ${IMPLOT_SOURCE_DIR})
+endif()
+
 if(IMGUI_BACKEND_VULKAN)
 	find_package(Vulkan REQUIRED)
 	target_link_libraries(${TARGET_NAME} PRIVATE Vulkan::Vulkan)
