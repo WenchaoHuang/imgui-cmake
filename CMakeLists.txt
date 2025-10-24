@@ -253,6 +253,12 @@ if(IMGUI_ENABLE_IMPLOT)
 	target_include_directories(${TARGET_NAME} PUBLIC ${IMPLOT_SOURCE_DIR})
 endif()
 
+# OpenGL library
+if(IMGUI_BACKEND_OPENGL2 OR IMGUI_BACKEND_OPENGL3)
+	find_package(OpenGL REQUIRED)
+	target_link_libraries(${TARGET_NAME} PRIVATE OpenGL::GL)
+endif()
+
 # Vulkan library
 if(IMGUI_BACKEND_VULKAN)
 	find_package(Vulkan REQUIRED)
@@ -338,12 +344,40 @@ if(IMGUI_BUILD_EXAMPLES)
 
 	# GLFW backend
 	if(IMGUI_BACKEND_GLFW AND TARGET glfw)
+		# GLFW + OpenGL2
+		if(IMGUI_BACKEND_OPENGL2)
+			set(EXAMPLE_NAME example_glfw_opengl2)
+			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
+			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+			target_link_libraries(${EXAMPLE_NAME} imgui glfw ${OPENGL_LIBRARIES})
+		endif()
+
+		# GLFW + OpenGL3
+		if(IMGUI_BACKEND_OPENGL3)
+			set(EXAMPLE_NAME example_glfw_opengl3)
+			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
+			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+			target_link_libraries(${EXAMPLE_NAME} imgui glfw ${OPENGL_LIBRARIES})
+		endif()
+
 		# GLFW + Vulkan
 		if(IMGUI_BACKEND_VULKAN)
 			set(EXAMPLE_NAME example_glfw_vulkan)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
 			target_link_libraries(${EXAMPLE_NAME} imgui glfw Vulkan::Vulkan)
+		endif()
+
+		# GLFW + Metal
+		if(IMGUI_BACKEND_METAL)
+			set(EXAMPLE_NAME example_glfw_metal)
+			find_library(METAL_FRAMEWORK Metal REQUIRED)
+			find_library(APPKIT_FRAMEWORK AppKit REQUIRED)
+			find_library(METALKIT_FRAMEWORK MetalKit REQUIRED)
+			find_library(GAMECONTROLLER_FRAMEWORK GameController REQUIRED)
+			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.mm")
+			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+			target_link_libraries(${EXAMPLE_NAME} imgui glfw ${APPKIT_FRAMEWORK} ${METAL_FRAMEWORK} ${METALKIT_FRAMEWORK} ${GAMECONTROLLER_FRAMEWORK})
 		endif()
 	endif()
 	
