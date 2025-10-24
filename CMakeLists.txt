@@ -23,6 +23,10 @@ cmake_minimum_required(VERSION 3.10)
 # Target name
 set(TARGET_NAME imgui)
 
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Project name
 project(${TARGET_NAME} LANGUAGES CXX)
 
@@ -283,12 +287,15 @@ endif()
 option(IMGUI_BUILD_EXAMPLES "Build ImGui examples" OFF)
 
 if(IMGUI_BUILD_EXAMPLES)
+	# No backend
 	set(EXAMPLE_NAME example_null)
 	add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 	target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
 	target_link_libraries(${EXAMPLE_NAME} imgui)
 
+	# Win32 backend
 	if(IMGUI_BACKEND_WIN32)
+		# Win32 + DX9
 		if(IMGUI_BACKEND_DX9)
 			set(EXAMPLE_NAME example_win32_directx9)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
@@ -296,6 +303,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			target_link_libraries(${EXAMPLE_NAME} imgui d3d9)
 		endif()
 
+		# Win32 + DX10
 		if(IMGUI_BACKEND_DX10)
 			set(EXAMPLE_NAME example_win32_directx10)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
@@ -303,6 +311,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			target_link_libraries(${EXAMPLE_NAME} imgui d3d10)
 		endif()
 
+		# Win32 + DX11
 		if(IMGUI_BACKEND_DX11)
 			set(EXAMPLE_NAME example_win32_directx11)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
@@ -310,6 +319,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			target_link_libraries(${EXAMPLE_NAME} imgui d3d11)
 		endif()
 
+		# Win32 + DX12
 		if(IMGUI_BACKEND_DX12)
 			set(EXAMPLE_NAME example_win32_directx12)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
@@ -317,6 +327,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			target_link_libraries(${EXAMPLE_NAME} imgui d3d12 dxgi)
 		endif()
 
+		# Win32 + Vulkan 
 		if(IMGUI_BACKEND_VULKAN)
 			set(EXAMPLE_NAME example_win32_vulkan)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
@@ -325,12 +336,26 @@ if(IMGUI_BUILD_EXAMPLES)
 		endif()
 	endif()
 
+	# GLFW backend
 	if(IMGUI_BACKEND_GLFW AND TARGET glfw)
+		# GLFW + Vulkan
 		if(IMGUI_BACKEND_VULKAN)
 			set(EXAMPLE_NAME example_glfw_vulkan)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
 			target_link_libraries(${EXAMPLE_NAME} imgui glfw Vulkan::Vulkan)
 		endif()
+	endif()
+	
+	# OSX + Metal
+	if(IMGUI_BACKEND_OSX AND IMGUI_BACKEND_METAL)
+		set(EXAMPLE_NAME example_apple_metal)
+		find_library(METAL_FRAMEWORK Metal REQUIRED)
+		find_library(APPKIT_FRAMEWORK AppKit REQUIRED)
+		find_library(METALKIT_FRAMEWORK MetalKit REQUIRED)
+		find_library(GAMECONTROLLER_FRAMEWORK GameController REQUIRED)
+		add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.mm")
+		target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+		target_link_libraries(${EXAMPLE_NAME} imgui ${APPKIT_FRAMEWORK} ${METAL_FRAMEWORK} ${METALKIT_FRAMEWORK} ${GAMECONTROLLER_FRAMEWORK})
 	endif()
 endif()
