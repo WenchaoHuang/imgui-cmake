@@ -82,8 +82,10 @@ if(IMGUI_ENABLE_IMPLOT)
 endif()
 
 ################################################################################
-#############################   Backend options    #############################
+##############################   Build options    ##############################
 ################################################################################
+
+option(IMGUI_ENABLE_DEMO_WINDOW			"Enable demo window"			OFF)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	option(IMGUI_BACKEND_DX9			"Enable DirectX9 backend"		OFF)
@@ -137,7 +139,6 @@ set(IMGUI_HEADERS
 # Core sources
 set(IMGUI_SOURCES
 	${IMGUI_SOURCE_DIR}/imgui.cpp
-	${IMGUI_SOURCE_DIR}/imgui_demo.cpp
 	${IMGUI_SOURCE_DIR}/imgui_draw.cpp
 	${IMGUI_SOURCE_DIR}/imgui_tables.cpp
 	${IMGUI_SOURCE_DIR}/imgui_widgets.cpp
@@ -151,9 +152,15 @@ if(IMGUI_ENABLE_IMPLOT)
     )
     list(APPEND IMGUI_SOURCES
         ${IMPLOT_SOURCE_DIR}/implot.cpp
-		${IMPLOT_SOURCE_DIR}/implot_demo.cpp
         ${IMPLOT_SOURCE_DIR}/implot_items.cpp
     )
+	if(IMGUI_ENABLE_DEMO_WINDOW)
+		list(APPEND IMGUI_SOURCES "${IMPLOT_SOURCE_DIR}/implot_demo.cpp")
+	endif()
+endif()
+
+if(IMGUI_ENABLE_DEMO_WINDOW OR IMGUI_BUILD_EXAMPLES)
+	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/imgui_demo.cpp")
 endif()
 
 if(IMGUI_BACKEND_DX9)
