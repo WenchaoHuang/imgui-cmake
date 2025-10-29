@@ -57,15 +57,15 @@ message(STATUS "ImGui source directory: ${IMGUI_SOURCE_DIR}")
 ##############################   Locate ImPlot    ##############################
 ################################################################################
 
-# Enable ImPlot (optional)
-option(IMGUI_ENABLE_IMPLOT "Enable ImPlot support" OFF)
+# Enable ImPlot extension (optional)
+option(IMGUI_EXT_IMPLOT "Enable ImPlot extension" OFF)
 
 # Search order for ImPlot:
 # 1. Check if ImPlot source files are located in the parent directory under "../implot" (recommended).
 # 2. If not found, check the current directory.
 # 3. If neither exists, require the user to manually specify IMPLOT_SOURCE_DIR.
 
-if(IMGUI_ENABLE_IMPLOT)
+if(IMGUI_EXT_IMPLOT)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../implot/implot.h")
         set(IMPLOT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../implot" CACHE PATH "Path to the ImPlot source directory")
     elseif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/implot.h")
@@ -145,7 +145,7 @@ set(IMGUI_SOURCES
 )
 
 # ImPlot sources
-if(IMGUI_ENABLE_IMPLOT)
+if(IMGUI_EXT_IMPLOT)
     list(APPEND IMGUI_HEADERS
         ${IMPLOT_SOURCE_DIR}/implot.h
         ${IMPLOT_SOURCE_DIR}/implot_internal.h
@@ -275,7 +275,7 @@ add_library(ImGui::ImGui ALIAS ${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC ${IMGUI_SOURCE_DIR})
 
 # ImPlot directory
-if(IMGUI_ENABLE_IMPLOT)
+if(IMGUI_EXT_IMPLOT)
 	target_include_directories(${TARGET_NAME} PUBLIC ${IMPLOT_SOURCE_DIR})
 endif()
 
