@@ -269,6 +269,7 @@ endif()
 
 # Create the static library
 add_library(${TARGET_NAME} STATIC ${IMGUI_HEADERS} ${IMGUI_SOURCES})
+add_library(ImGui::ImGui ALIAS ${TARGET_NAME})
 
 # Include directories
 target_include_directories(${TARGET_NAME} PUBLIC ${IMGUI_SOURCE_DIR})
@@ -362,7 +363,7 @@ if(IMGUI_BUILD_EXAMPLES)
 	set(EXAMPLE_NAME example_null)
 	add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 	target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-	target_link_libraries(${EXAMPLE_NAME} imgui)
+	target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui)
 
 	# Win32 backend
 	if(IMGUI_BACKEND_WIN32)
@@ -371,7 +372,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			set(EXAMPLE_NAME example_win32_directx9)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-			target_link_libraries(${EXAMPLE_NAME} imgui d3d9)
+			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui d3d9)
 		endif()
 
 		# Win32 + DX10
@@ -379,7 +380,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			set(EXAMPLE_NAME example_win32_directx10)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-			target_link_libraries(${EXAMPLE_NAME} imgui d3d10)
+			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui d3d10)
 		endif()
 
 		# Win32 + DX11
@@ -387,7 +388,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			set(EXAMPLE_NAME example_win32_directx11)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-			target_link_libraries(${EXAMPLE_NAME} imgui d3d11)
+			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui d3d11)
 		endif()
 
 		# Win32 + DX12
@@ -395,7 +396,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			set(EXAMPLE_NAME example_win32_directx12)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-			target_link_libraries(${EXAMPLE_NAME} imgui d3d12 dxgi)
+			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui d3d12 dxgi)
 		endif()
 
 		# Win32 + Vulkan 
@@ -403,7 +404,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			set(EXAMPLE_NAME example_win32_vulkan)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-			target_link_libraries(${EXAMPLE_NAME} imgui Vulkan::Vulkan)
+			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui Vulkan::Vulkan)
 		endif()
 	endif()
 
@@ -414,7 +415,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			set(EXAMPLE_NAME example_glfw_opengl2)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-			target_link_libraries(${EXAMPLE_NAME} imgui glfw ${OPENGL_LIBRARIES})
+			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui glfw ${OPENGL_LIBRARIES})
 		endif()
 
 		# GLFW + OpenGL3
@@ -422,7 +423,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			set(EXAMPLE_NAME example_glfw_opengl3)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-			target_link_libraries(${EXAMPLE_NAME} imgui glfw ${OPENGL_LIBRARIES})
+			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui glfw ${OPENGL_LIBRARIES})
 		endif()
 
 		# GLFW + Vulkan
@@ -430,7 +431,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			set(EXAMPLE_NAME example_glfw_vulkan)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-			target_link_libraries(${EXAMPLE_NAME} imgui glfw Vulkan::Vulkan)
+			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui glfw Vulkan::Vulkan)
 		endif()
 
 		# GLFW + Metal
@@ -442,7 +443,7 @@ if(IMGUI_BUILD_EXAMPLES)
 			find_library(GAMECONTROLLER_FRAMEWORK GameController REQUIRED)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.mm")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-			target_link_libraries(${EXAMPLE_NAME} imgui glfw ${APPKIT_FRAMEWORK} ${METAL_FRAMEWORK} ${METALKIT_FRAMEWORK} ${GAMECONTROLLER_FRAMEWORK})
+			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui glfw ${APPKIT_FRAMEWORK} ${METAL_FRAMEWORK} ${METALKIT_FRAMEWORK} ${GAMECONTROLLER_FRAMEWORK})
 		endif()
 	endif()
 	
@@ -455,6 +456,6 @@ if(IMGUI_BUILD_EXAMPLES)
 		find_library(GAMECONTROLLER_FRAMEWORK GameController REQUIRED)
 		add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.mm")
 		target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-		target_link_libraries(${EXAMPLE_NAME} imgui ${APPKIT_FRAMEWORK} ${METAL_FRAMEWORK} ${METALKIT_FRAMEWORK} ${GAMECONTROLLER_FRAMEWORK})
+		target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui ${APPKIT_FRAMEWORK} ${METAL_FRAMEWORK} ${METALKIT_FRAMEWORK} ${GAMECONTROLLER_FRAMEWORK})
 	endif()
 endif()
