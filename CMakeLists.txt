@@ -380,12 +380,6 @@ endif()
 option(IMGUI_BUILD_EXAMPLES "Build ImGui examples" OFF)
 
 if(IMGUI_BUILD_EXAMPLES)
-	# No backend
-	set(EXAMPLE_NAME example_null)
-	add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
-	target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
-	target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui)
-
 	# Win32 backend
 	if(IMGUI_BACKEND_WIN32)
 		# Win32 + DX9
@@ -426,6 +420,14 @@ if(IMGUI_BUILD_EXAMPLES)
 			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
 			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
 			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui Vulkan::Vulkan)
+		endif()
+
+		# Win32 + OpenGL3
+		if(IMGUI_BACKEND_OPENGL3)
+			set(EXAMPLE_NAME example_win32_opengl3)
+			add_executable(${EXAMPLE_NAME} "${IMGUI_SOURCE_DIR}/examples/${EXAMPLE_NAME}/main.cpp")
+			target_include_directories(${EXAMPLE_NAME} PRIVATE "${IMGUI_SOURCE_DIR}/backends")
+			target_link_libraries(${EXAMPLE_NAME} ImGui::ImGui ${OPENGL_LIBRARIES})
 		endif()
 	endif()
 
