@@ -1,14 +1,21 @@
 # CMake support for Dear ImGui
 
-This project provides a single [CMakeLists.txt](./CMakeLists.txt) for building the [Dear ImGui](https://github.com/ocornut/imgui) library, a bloat-free immediate mode graphical user interface library for C++.
+This project provides a single [CMakeLists.txt](./CMakeLists.txt) for building the [Dear ImGui](https://github.com/ocornut/imgui) as a static library.
 It supports optional integration with [ImPlot](https://github.com/epezent/implot) for plotting capabilities and various rendering and platform backends (e.g., DirectX, Vulkan, OpenGL, GLFW, SDL, etc.).
 
-To minimize changes to existing build systems, imgui-cmake is solely responsible for building and dose ***NOT*** manage source code (e.g., via submodules), which is the primary distinction from other similar libraries.
+Unlike other integrations, **imgui-cmake** focuses solely on building and does **NOT** manage source code (e.g., no submodules).  
+This makes it easy to integrate into existing projects without altering repository structure.
 
-The library is built as a static library and includes optional example applications to demonstrate its usage.
 The Example project can be found at [imgui-cmake-examples](https://github.com/WenchaoHuang/imgui-cmake-examples.git).
 
-## Supported Build Approaches
+
+## Clone the Repository
+```
+    git clone https://github.com/WenchaoHuang/imgui-cmake.git
+```
+
+
+## Build Approaches
 The `CMakeLists.txt` supports three ways to locate the ImGui source files:
 1. **Place at the same level as the ImGui directory (Recommended)**:
     ```
@@ -32,12 +39,62 @@ The `CMakeLists.txt` supports three ways to locate the ImGui source files:
     ```
     cmake -DIMGUI_SOURCE_DIR=/path/to/imgui
     ```
-If ImPlot is enabled (`IMGUI_ENABLE_IMPLOT=ON`), the same approaches apply for locating ImPlot source files.
+If ImPlot is enabled (`IMGUI_EXT_IMPLOT=ON`), the same approaches apply for locating ImPlot source files.
 
-## Clone the Repository
-```
-    git clone https://github.com/WenchaoHuang/imgui-cmake.git
-```
+
+## Example Usage
+1. Add as a Subdirectory
+    ```cmake
+    add_subdirectory(imgui-cmake)
+    target_link_libraries(MyApp PRIVATE ImGui::ImGui)
+    ```
+2. Enable Backends
+    ```bash
+    cmake -DIMGUI_BACKEND_WIN32=ON
+    cmake -DIMGUI_BACKEND_VULKAN=ON
+    cmake -DIMGUI_BUILD_EXAMPLES=ON
+    cmake --build .
+    ```
+
+
+## Backend Support Matrix
+
+| Backend Option | Windows | Linux | macOS | Android | Web (Emscripten) |
+|----------------|----------|--------|--------|----------|------------------|
+| `IMGUI_BACKEND_WIN32`         | ✅ | ❌ | ❌ | ❌ | ❌ |
+| `IMGUI_BACKEND_DX9`           | ✅ | ❌ | ❌ | ❌ | ❌ |
+| `IMGUI_BACKEND_DX10`          | ✅ | ❌ | ❌ | ❌ | ❌ |
+| `IMGUI_BACKEND_DX11`          | ✅ | ❌ | ❌ | ❌ | ❌ |
+| `IMGUI_BACKEND_DX12`          | ✅ | ❌ | ❌ | ❌ | ❌ |
+| `IMGUI_BACKEND_VULKAN`        | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `IMGUI_BACKEND_OPENGL2`       | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `IMGUI_BACKEND_OPENGL3`       | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `IMGUI_BACKEND_METAL`         | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `IMGUI_BACKEND_WGPU`          | ❌ | ❌ | ✅ | ❌ | ✅ |
+| `IMGUI_BACKEND_GLFW`          | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `IMGUI_BACKEND_SDL2`          | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `IMGUI_BACKEND_SDL3`          | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `IMGUI_BACKEND_SDLGPU3`       | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `IMGUI_BACKEND_SDLRENDERER2`  | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `IMGUI_BACKEND_SDLRENDERER3`  | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `IMGUI_BACKEND_GLUT`          | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `IMGUI_BACKEND_ALLEGRO5`      | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `IMGUI_BACKEND_OSX`           | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `IMGUI_BACKEND_ANDROID`       | ❌ | ❌ | ❌ | ✅ | ❌ |
+
+### Additional Include Path Requirements
+
+Some **platform backends** depend on external libraries that are **not bundled** with Dear ImGui.  
+When these backends are enabled, you must specify the appropriate include paths manually.
+
+| Backend                  | Required Variable        | Description                          |
+|--------------------------|--------------------------|--------------------------------------|
+| `IMGUI_BACKEND_GLFW`     | `IMGUI_GLFW_INCLUDE`     | Path to the GLFW headers             |
+| `IMGUI_BACKEND_SDL2`     | `IMGUI_SDL2_INCLUDE`     | Path to the SDL2 headers             |
+| `IMGUI_BACKEND_SDL3`     | `IMGUI_SDL3_INCLUDE`     | Path to the SDL3 headers             |
+| `IMGUI_BACKEND_GLUT`     | `IMGUI_GLUT_INCLUDE`     | Path to the GLUT or FreeGLUT headers |
+| `IMGUI_BACKEND_ALLEGRO5` | `IMGUI_ALLEGRO5_INCLUDE` | Path to the Allegro5 headers         |
+
 
 ## License
 This project is distributed under the terms of the [MIT License](LICENSE).
