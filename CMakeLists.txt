@@ -130,178 +130,173 @@ endif()
 # Demo window (optional)
 option(IMGUI_ENABLE_DEMO_WINDOW	"Enable demo window" OFF)
 
-# Core headers
-set(IMGUI_HEADERS
-	${IMGUI_SOURCE_DIR}/imgui.h
-	${IMGUI_SOURCE_DIR}/imconfig.h
-	${IMGUI_SOURCE_DIR}/imgui_internal.h
-)
-
 # Core sources
 set(IMGUI_SOURCES
+	${IMGUI_SOURCE_DIR}/imgui.h
 	${IMGUI_SOURCE_DIR}/imgui.cpp
+	${IMGUI_SOURCE_DIR}/imconfig.h
 	${IMGUI_SOURCE_DIR}/imgui_draw.cpp
+	${IMGUI_SOURCE_DIR}/imgui_internal.h
 	${IMGUI_SOURCE_DIR}/imgui_tables.cpp
 	${IMGUI_SOURCE_DIR}/imgui_widgets.cpp
 )
 
-# ImPlot sources
-if(IMGUI_EXT_IMPLOT)
-    list(APPEND IMGUI_HEADERS
-        ${IMPLOT_SOURCE_DIR}/implot.h
-        ${IMPLOT_SOURCE_DIR}/implot_internal.h
-    )
-    list(APPEND IMGUI_SOURCES
-        ${IMPLOT_SOURCE_DIR}/implot.cpp
-        ${IMPLOT_SOURCE_DIR}/implot_items.cpp
-    )
-	if(IMGUI_ENABLE_DEMO_WINDOW)
-		list(APPEND IMGUI_SOURCES "${IMPLOT_SOURCE_DIR}/implot_demo.cpp")
-	endif()
-endif()
-
+# Demo source
 if(IMGUI_ENABLE_DEMO_WINDOW OR IMGUI_BUILD_EXAMPLES)
 	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/imgui_demo.cpp")
+endif()
+
+# ImPlot sources
+if(IMGUI_EXT_IMPLOT)
+    list(APPEND IMGUI_EXT_SOURCES
+        ${IMPLOT_SOURCE_DIR}/implot.h
+        ${IMPLOT_SOURCE_DIR}/implot.cpp
+        ${IMPLOT_SOURCE_DIR}/implot_items.cpp
+        ${IMPLOT_SOURCE_DIR}/implot_internal.h
+    )
+	if(IMGUI_ENABLE_DEMO_WINDOW)
+		list(APPEND IMGUI_EXT_SOURCES "${IMPLOT_SOURCE_DIR}/implot_demo.cpp")
+	endif()
 endif()
 
 if(IMGUI_BACKEND_DX9)
 	message(STATUS "ImGui: DirectX 9 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_DX9)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx9.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx9.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx9.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx9.cpp")
 endif()
 
 if(IMGUI_BACKEND_DX10)
 	message(STATUS "ImGui: DirectX 10 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_DX10)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx10.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx10.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx10.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx10.cpp")
 endif()
 
 if(IMGUI_BACKEND_DX11)
 	message(STATUS "ImGui: DirectX 11 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_DX11)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx11.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx11.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx11.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx11.cpp")
 endif()
 
 if(IMGUI_BACKEND_DX12)
 	message(STATUS "ImGui: DirectX 12 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_DX12)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx12.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx12.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx12.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_dx12.cpp")
 endif()
 
 if(IMGUI_BACKEND_WGPU)
 	message(STATUS "ImGui: Web GPU backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_WGPU)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_wgpu.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_wgpu.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_wgpu.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_wgpu.cpp")
 endif()
 
 if(IMGUI_BACKEND_METAL)
 	message(STATUS "ImGui: Metal backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_METAL)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_metal.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_metal.mm")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_metal.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_metal.mm")
 endif()
 
 if(IMGUI_BACKEND_ANDROID)
 	message(STATUS "ImGui: Android backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_ANDROID)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_android.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_android.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_android.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_android.cpp")
 endif()
 
 if(IMGUI_BACKEND_VULKAN)
 	message(STATUS "ImGui: Vulkan backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_VULKAN)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_vulkan.cpp")
 endif()
 
 if(IMGUI_BACKEND_OPENGL2)
 	message(STATUS "ImGui: OpenGL2 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_OPENGL2)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl2.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl2.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl2.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl2.cpp")
 endif()
 
 if(IMGUI_BACKEND_OPENGL3)
 	message(STATUS "ImGui: OpenGL3 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_OPENGL3)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp")
 endif()
 
 if(IMGUI_BACKEND_ALLEGRO5)
 	message(STATUS "ImGui: Allegro5 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_ALLEGRO5)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_allegro5.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_allegro5.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_allegro5.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_allegro5.cpp")
 endif()
 
 if(IMGUI_BACKEND_OSX)
 	message(STATUS "ImGui: OSX backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_OSX)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_osx.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_osx.mm")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_osx.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_osx.mm")
 endif()
 
 if(IMGUI_BACKEND_GLFW)
 	message(STATUS "ImGui: GLFW backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_GLFW)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.cpp")
 endif()
 
 if(IMGUI_BACKEND_GLUT)
 	message(STATUS "ImGui: GLUT backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_GLUT)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glut.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glut.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glut.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_glut.cpp")
 endif()
 
 if(IMGUI_BACKEND_WIN32)
 	message(STATUS "ImGui: Win32 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_WIN32)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_win32.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_win32.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_win32.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_win32.cpp")
 endif()
 
 if(IMGUI_BACKEND_SDL2)
 	message(STATUS "ImGui: SDL2 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_SDL2)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl2.cpp")
 endif()
 
 if(IMGUI_BACKEND_SDL3)
 	message(STATUS "ImGui: SDL3 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_SDL3)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdl3.cpp")
 endif()
 
 if(IMGUI_BACKEND_SDLGPU3)
 	message(STATUS "ImGui: SDLGPU3 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_SDLGPU3)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlgpu3.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlgpu3.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlgpu3.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlgpu3.cpp")
 endif()
 
 if(IMGUI_BACKEND_SDLRENDERER2)
 	message(STATUS "ImGui: SDLRenderer2 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_SDLRENDERER2)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer2.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer2.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer2.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer2.cpp")
 endif()
 
 if(IMGUI_BACKEND_SDLRENDERER3)
 	message(STATUS "ImGui: SDLRenderer3 backend enabled")
 	list(APPEND IMGUI_BACKEND_LIST IMGUI_BACKEND_SDLRENDERER3)
-	list(APPEND IMGUI_HEADERS "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.h")
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.h")
+	list(APPEND IMGUI_BACKEND_SOURCES "${IMGUI_SOURCE_DIR}/backends/imgui_impl_sdlrenderer3.cpp")
 endif()
 
 ################################################################################
@@ -309,7 +304,7 @@ endif()
 ################################################################################
 
 # Create the static library
-add_library(${TARGET_NAME} STATIC ${IMGUI_HEADERS} ${IMGUI_SOURCES})
+add_library(${TARGET_NAME} STATIC ${IMGUI_SOURCES} ${IMGUI_BACKEND_SOURCES} ${IMGUI_EXT_SOURCES})
 add_library(ImGui::ImGui ALIAS ${TARGET_NAME})
 
 # Include directories
@@ -396,6 +391,11 @@ endif()
 if(MSVC)
     target_compile_options(${TARGET_NAME} PRIVATE /MP /W4)
 endif()
+
+# IDE Filters
+source_group("0. Core"			FILES ${IMGUI_SOURCES})
+source_group("1. Backends"		FILES ${IMGUI_BACKEND_SOURCES})
+source_group("2. Extensions"	FILES ${IMGUI_EXT_SOURCES})
 
 ################################################################################
 #############################   Build examples    ##############################
