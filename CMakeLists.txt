@@ -127,36 +127,27 @@ endif()
 #############################   Collect sources    #############################
 ################################################################################
 
-# Demo window (optional)
-option(IMGUI_ENABLE_DEMO_WINDOW	"Enable demo window" OFF)
-
 # Core sources
 set(IMGUI_SOURCES
 	${IMGUI_SOURCE_DIR}/imgui.h
 	${IMGUI_SOURCE_DIR}/imgui.cpp
 	${IMGUI_SOURCE_DIR}/imconfig.h
 	${IMGUI_SOURCE_DIR}/imgui_draw.cpp
+	${IMGUI_SOURCE_DIR}/imgui_demo.cpp
 	${IMGUI_SOURCE_DIR}/imgui_internal.h
 	${IMGUI_SOURCE_DIR}/imgui_tables.cpp
 	${IMGUI_SOURCE_DIR}/imgui_widgets.cpp
 )
-
-# Demo source
-if(IMGUI_ENABLE_DEMO_WINDOW OR IMGUI_BUILD_EXAMPLES)
-	list(APPEND IMGUI_SOURCES "${IMGUI_SOURCE_DIR}/imgui_demo.cpp")
-endif()
 
 # ImPlot sources
 if(IMGUI_EXT_IMPLOT)
     list(APPEND IMGUI_EXT_SOURCES
         ${IMPLOT_SOURCE_DIR}/implot.h
         ${IMPLOT_SOURCE_DIR}/implot.cpp
+        ${IMPLOT_SOURCE_DIR}/implot_demo.cpp
         ${IMPLOT_SOURCE_DIR}/implot_items.cpp
         ${IMPLOT_SOURCE_DIR}/implot_internal.h
     )
-	if(IMGUI_ENABLE_DEMO_WINDOW)
-		list(APPEND IMGUI_EXT_SOURCES "${IMPLOT_SOURCE_DIR}/implot_demo.cpp")
-	endif()
 endif()
 
 if(IMGUI_BACKEND_DX9)
